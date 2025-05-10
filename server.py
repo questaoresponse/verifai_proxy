@@ -38,7 +38,7 @@ def webhook():
     elif request.method == "POST":
         data = request.get_json()
         # data_args = request.args.to_dict()
-        io.emit("webhook", json.dumps(data))
+        io.emit("webhook", data)
         return "EVENT_RECEIVED", 200
 
 if __name__ == "__main__":
