@@ -1,11 +1,13 @@
-VERIFY_TOKEN = "meu_token_secreto"
 
 from flask import Flask, request
 import json
 from flask_socketio import SocketIO
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 app = Flask(__name__)
 
