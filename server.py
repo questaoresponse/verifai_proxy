@@ -3,6 +3,9 @@ VERIFY_TOKEN = "meu_token_secreto"
 from flask import Flask, request
 import json
 from flask_socketio import SocketIO
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -12,7 +15,6 @@ io = SocketIO(app)
 def connect(sid):
     print(f"Cliente {sid} conectado.")
 
-# Evento de desconexão
 @io.event
 def disconnect(sid):
     print(f"Cliente {sid} desconectado.")
@@ -35,8 +37,8 @@ def webhook():
             return "Erro de verificação", 403
     elif request.method == "POST":
         data = request.get_json()
-        data_args = request.args.to_dict()
-        io.emit(json.dumps({data: data, data_args: "data_args"}))
+        # data_args = request.args.to_dict()
+        io.emit(json.dumps(data))
         return "EVENT_RECEIVED", 200
 
 if __name__ == "__main__":
