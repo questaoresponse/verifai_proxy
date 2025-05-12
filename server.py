@@ -49,6 +49,7 @@ def send_requests():
     except Exception as e:
         print("error", e)
     threading.Timer(10, send_requests).start()  # executa a cada 2 segundos
+    return None
 
 send_requests()
 
