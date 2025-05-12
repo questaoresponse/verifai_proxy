@@ -3,6 +3,8 @@ from flask import Flask, request
 import json
 from flask_socketio import SocketIO
 import os
+import requests
+import threading, time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,8 +25,7 @@ def disconnect(sid):
 
 @app.route("/", methods=["GET"])
 def home():
-    print("Endpoint raiz chamado!")
-    return "Servidor rodando com pyngrok no Colab!"
+    return "Ok"
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
@@ -42,6 +43,14 @@ def webhook():
         # data_args = request.args.to_dict()
         io.emit("webhook", data)
         return "EVENT_RECEIVED", 200
+def send_requests():
+    try:
+        requests.get("https://verifai-proxy.onrender.com")
+    except Exception as e:
+        print("error", e)
+    threading.Timer(10, send_requests).start()  # executa a cada 2 segundos
+
+send_requests()
 
 if __name__ == "__main__":
     app.run("0.0.0.0", port=12345)
