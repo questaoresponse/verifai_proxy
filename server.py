@@ -45,7 +45,7 @@ def webhook():
         return "EVENT_RECEIVED", 200
 def send_requests():
     try:
-        requests.get("https://verifai-proxy.onrender.com")
+        requests.get("https://verifai-proxy-uxrm.onrender.com")
     except Exception as e:
         print("error", e)
     threading.Timer(10, send_requests).start()  # executa a cada 2 segundos
