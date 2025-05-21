@@ -1,4 +1,3 @@
-
 from flask import Flask, request
 import json
 from flask_socketio import SocketIO
@@ -40,8 +39,13 @@ def webhook():
             return "Erro de verificação", 403
     elif request.method == "POST":
         data = request.get_json()
+        rooms = io.server.manager.rooms.get('/', {})
+        num_clients = sum(len(clients) for clients in rooms.values())
+        if num_clients == 0:
+            requests.post("https://verifai-8z3i.onrender.com", json=data)
+        else:
+            io.emit("webhook", data)
         # data_args = request.args.to_dict()
-        io.emit("webhook", data)
         return "EVENT_RECEIVED", 200
 def send_requests():
     try:
