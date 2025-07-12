@@ -1,11 +1,11 @@
 
 from flask import Flask, request
-import json
 from flask_socketio import SocketIO
 import os
 import requests
-import threading, time
 from dotenv import load_dotenv
+import asyncio
+from threading import Thread
 
 load_dotenv()
 
@@ -43,15 +43,29 @@ def webhook():
         # data_args = request.args.to_dict()
         io.emit("webhook", data)
         return "EVENT_RECEIVED", 200
-def send_requests():
-    try:
-        requests.get("https://verifai-proxy-uxrm.onrender.com")
-    except Exception as e:
-        print("error", e)
-    threading.Timer(10, send_requests).start()  # executa a cada 2 segundos
-    return None
 
-send_requests()
+async def loop():
+    while True:
+        await asyncio.sleep(10)
+        try:
+            requests.get("https://verifai-proxy-uxrm.onrender.com")
+        except Exception as e:
+            pass
+
+def run_flask():
+    app.run("0.0.0.0", port=12345)
+    
+async def main():
+    asyncio.create_task(loop())
+    flask_thread = Thread(target=run_flask)
+    flask_thread.start()
+    try:
+        await loop()
+    except asyncio.CancelledError:
+        os._exit(0)
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", port=12345)
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        os._exit(0)
