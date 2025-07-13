@@ -43,7 +43,7 @@ def webhook():
 
         room = io.server.manager.rooms.get('/', {})
         if len(room) == 0:
-            requests.post("https://verifai-w7pk.onrender.com", json=data)
+            requests.post("https://verifai-w7pk.onrender.com/webhook", json=data)
         else:
             io.emit("webhook", data)
         return "EVENT_RECEIVED", 200
