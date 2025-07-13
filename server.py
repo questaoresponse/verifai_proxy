@@ -40,8 +40,12 @@ def webhook():
             return "Erro de verificação", 403
     elif request.method == "POST":
         data = request.get_json()
-        # data_args = request.args.to_dict()
-        io.emit("webhook", data)
+
+        room = io.server.manager.rooms.get('/', {})
+        if len(room) == 0:
+            requests.post("https://verifai-w7pk.onrender.com", json=data)
+        else:
+            io.emit("webhook", data)
         return "EVENT_RECEIVED", 200
 
 async def loop():
@@ -56,11 +60,10 @@ def run_flask():
     app.run("0.0.0.0", port=12345)
     
 async def main():
-    asyncio.create_task(loop())
     flask_thread = Thread(target=run_flask)
     flask_thread.start()
     try:
-        await loop()
+        await asyncio.create_task(loop())
     except asyncio.CancelledError:
         os._exit(0)
 
