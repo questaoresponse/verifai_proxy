@@ -25,7 +25,7 @@ def disconnect(sid):
 
 @app.route("/", methods=["GET"])
 def home():
-    return "Ok"
+    return "Ok", 200
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
