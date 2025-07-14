@@ -40,6 +40,7 @@ def webhook():
             return "Erro de verificação", 403
     elif request.method == "POST":
         data = request.get_json()
+        print(data)
 
         room = io.server.manager.rooms.get('/', {})
         if len(room) == 0:
