@@ -25,7 +25,8 @@ def disconnect(sid):
 
 @app.route("/", methods=["GET"])
 def home():
-    return "Ok", 200
+    n_clients = len(io.server.manager.rooms.get('/', {}))
+    return n_clients
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
@@ -36,17 +37,19 @@ def webhook():
         print(f"Webhook chamado! mode={mode}, token={token}, challenge={challenge}")
         if mode == "subscribe" and token == VERIFY_TOKEN:
             return challenge, 200
+        
         else:
             return "Erro de verificação", 403
     elif request.method == "POST":
         data = request.get_json()
-        print(data)
 
         room = io.server.manager.rooms.get('/', {})
         if len(room) == 0:
             requests.post("https://verifai-w7pk.onrender.com/webhook", json=data)
+
         else:
             io.emit("webhook", data)
+
         return "EVENT_RECEIVED", 200
 
 async def loop():
