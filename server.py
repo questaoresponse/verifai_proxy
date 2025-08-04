@@ -4,10 +4,9 @@ import json
 import os
 from quart import Quart, request
 import socketio
-import requests
 from dotenv import load_dotenv
 import uvicorn
-from threading import Thread
+import httpx
 
 load_dotenv()
 

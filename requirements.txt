@@ -1,7 +1,7 @@
 eventlet==0.40.2
+httpx
 python-dotenv==1.1.0
+python-socketio
+quart
 requests==2.32.3
 uvicorn
-quart
-python-socketio
-httpx
