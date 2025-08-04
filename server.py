@@ -18,7 +18,7 @@ app = Quart(__name__)
 asgi_app = socketio.ASGIApp(io, app)
 
 @io.event
-def connect(auth):
+def connect(_, _, auth):
     token = auth.get("token") if auth else None
     if token != VERIFY_TOKEN:
         return False  # desconecta
