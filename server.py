@@ -18,7 +18,7 @@ app = Quart(__name__)
 asgi_app = socketio.ASGIApp(io, app)
 
 @io.event
-def connect(_, _, auth):
+def connect(_, __, auth):
     token = auth.get("token") if auth else None
     if token != VERIFY_TOKEN:
         return False  # desconecta
@@ -67,14 +67,17 @@ async def keep_alive_loop():
 
 # Inicializa tudo no modo assíncrono
 async def main():
+    # Cria a tarefa do loop de keep-alive
     loop_task = asyncio.create_task(keep_alive_loop())
-    config = uvicorn.Config(app=io.asgi_app, host="0.0.0.0", port=12345, log_level="info")
+
+    # Configura e inicia o servidor Uvicorn
+    config = uvicorn.Config(app=app, host="0.0.0.0", port=12345)
     server = uvicorn.Server(config)
     await server.serve()
+
+    # (opcional) espera o loop de keep-alive (só após shutdown)
     await loop_task
 
+# Entry point
 if __name__ == "__main__":
-    import uvicorn
-    loop = asyncio.get_event_loop()
-    loop.create_task(keep_alive_loop())
-    uvicorn.run(asgi_app, host="0.0.0.0", port=12345)
+    asyncio.run(main())
