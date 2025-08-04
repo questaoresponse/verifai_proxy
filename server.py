@@ -14,7 +14,7 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 app = Flask(__name__)
 
-io = SocketIO(app)
+io = SocketIO(app, cors_allowed_origins="*")
 
 @io.event
 def connect(auth):
