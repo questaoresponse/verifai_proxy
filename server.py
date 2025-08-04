@@ -29,7 +29,7 @@ def disconnect(sid):
 
 @app.route("/", methods=["GET"])
 def home():
-    n_clients = sum(1 for _ in io.server.manager.get_participants('/', '/'))
+    n_clients = sum(1 for _ in io.manager.get_participants('/', '/'))
     return json.dumps({"n_clients": n_clients}), 200
 
 @app.route("/webhook", methods=["GET", "POST"])
@@ -48,7 +48,7 @@ def webhook():
     elif request.method == "POST":
         data = request.get_json()
 
-        n_clients = sum(1 for _ in io.server.manager.get_participants('/', '/'))
+        n_clients = sum(1 for _ in io.manager.get_participants('/', '/'))
         if n_clients == 0:
             requests.post("https://verifai-w7pk.onrender.com/webhook", json=data)
 
