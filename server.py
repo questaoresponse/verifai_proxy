@@ -1,11 +1,12 @@
 
+import asyncio
+import json
+import os
+from threading import Thread
 from flask import Flask, request
 from flask_socketio import SocketIO
-import os
 import requests
 from dotenv import load_dotenv
-import asyncio
-from threading import Thread
 
 load_dotenv()
 
@@ -26,7 +27,7 @@ def disconnect(sid):
 @app.route("/", methods=["GET"])
 def home():
     n_clients = len(io.server.manager.rooms.get('/', {}))
-    return n_clients
+    return json.dumps({"n_clients": n_clients}), 200
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
@@ -40,6 +41,7 @@ def webhook():
         
         else:
             return "Erro de verificação", 403
+        
     elif request.method == "POST":
         data = request.get_json()
 
@@ -61,7 +63,7 @@ async def loop():
             pass
 
 def run_flask():
-    app.run("0.0.0.0", port=12345)
+    io.run(app, "0.0.0.0", port=12345)
     
 async def main():
     flask_thread = Thread(target=run_flask)
