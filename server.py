@@ -52,7 +52,7 @@ def webhook():
             requests.post("https://verifai-w7pk.onrender.com/webhook", json=data)
 
         else:
-            io.emit("webhook", data, broadcast=True)
+            io.emit("webhook", data)
 
         return "EVENT_RECEIVED", 200
 
