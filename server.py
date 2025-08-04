@@ -47,8 +47,8 @@ def webhook():
     elif request.method == "POST":
         data = request.get_json()
 
-        room = sum(1 for _ in io.server.manager.get_participants('/', '/'))
-        if len(room) == 0:
+        n_clients = sum(1 for _ in io.server.manager.get_participants('/', '/'))
+        if n_clients == 0:
             requests.post("https://verifai-w7pk.onrender.com/webhook", json=data)
 
         else:
