@@ -2,12 +2,12 @@
 import asyncio
 import json
 import os
-from threading import Thread
 from quart import Quart, request
 import socketio
 import requests
 from dotenv import load_dotenv
 import uvicorn
+from threading import Thread
 
 load_dotenv()
 
@@ -33,7 +33,7 @@ def home():
     return json.dumps({"n_clients": n_clients}), 200
 
 @app.route("/webhook", methods=["GET", "POST"])
-def webhook():
+async def webhook():
     if request.method == "GET":
         mode = request.args.get("hub.mode")
         token = request.args.get("hub.verify_token")
@@ -46,11 +46,12 @@ def webhook():
             return "Erro de verificação", 403
         
     elif request.method == "POST":
-        data = request.get_json()
+        data = await request.get_json()
 
         n_clients = sum(1 for _ in io.manager.get_participants('/', '/'))
         if n_clients == 0:
-            requests.post("https://verifai-w7pk.onrender.com/webhook", json=data)
+            async with httpx.AsyncClient() as client:
+                await client.post("https://verifai-w7pk.onrender.com/webhook", json=data)
 
         else:
             io.emit("webhook", data)
@@ -61,7 +62,8 @@ async def keep_alive_loop():
     while True:
         await asyncio.sleep(10)
         try:
-            requests.get("https://verifai-proxy-uxrm.onrender.com")
+            async with httpx.AsyncClient() as client:
+                await client.get("https://verifai-proxy-uxrm.onrender.com")
         except:
             pass
 
