@@ -63,7 +63,7 @@ async def loop():
             pass
 
 def run_flask():
-    io.run(app, "0.0.0.0", port=12345, debug=True)
+    io.run(app, "0.0.0.0", port=12345, debug=True, use_reloader=False)
     
 async def main():
     flask_thread = Thread(target=run_flask)
