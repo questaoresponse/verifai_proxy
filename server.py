@@ -3,18 +3,19 @@ import asyncio
 import json
 import os
 from threading import Thread
-from flask import Flask, request
-from flask_socketio import SocketIO
+from quart import Quart, request
+import socketio
 import requests
 from dotenv import load_dotenv
+import uvicorn
 
 load_dotenv()
 
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
-app = Flask(__name__)
-
-io = SocketIO(app, cors_allowed_origins="*")
+io = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
+app = Quart(__name__)
+asgi_app = socketio.ASGIApp(io, app)
 
 @io.event
 def connect(auth):
@@ -56,27 +57,24 @@ def webhook():
 
         return "EVENT_RECEIVED", 200
 
-async def loop():
+async def keep_alive_loop():
     while True:
         await asyncio.sleep(10)
         try:
             requests.get("https://verifai-proxy-uxrm.onrender.com")
-        except Exception as e:
+        except:
             pass
 
-def run_flask():
-    io.run(app, "0.0.0.0", port=12345)
-    
+# Inicializa tudo no modo assíncrono
 async def main():
-    flask_thread = Thread(target=run_flask)
-    flask_thread.start()
-    try:
-        await asyncio.create_task(loop())
-    except asyncio.CancelledError:
-        os._exit(0)
+    loop_task = asyncio.create_task(keep_alive_loop())
+    config = uvicorn.Config(app=io.asgi_app, host="0.0.0.0", port=12345, log_level="info")
+    server = uvicorn.Server(config)
+    await server.serve()
+    await loop_task
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        os._exit(0)
+    import uvicorn
+    loop = asyncio.get_event_loop()
+    loop.create_task(keep_alive_loop())
+    uvicorn.run(asgi_app, host="0.0.0.0", port=12345)
