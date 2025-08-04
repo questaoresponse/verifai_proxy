@@ -17,8 +17,10 @@ app = Flask(__name__)
 io = SocketIO(app)
 
 @io.event
-def connect(sid):
-    print(f"Cliente {sid} conectado.")
+def connect(auth):
+    token = auth.get("token") if auth else None
+    if token != VERIFY_TOKEN:
+        return False  # desconecta
 
 @io.event
 def disconnect(sid):
@@ -50,7 +52,7 @@ def webhook():
             requests.post("https://verifai-w7pk.onrender.com/webhook", json=data)
 
         else:
-            io.emit("webhook", data)
+            io.emit("webhook", data, broadcast=True)
 
         return "EVENT_RECEIVED", 200
 
