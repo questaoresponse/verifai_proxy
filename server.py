@@ -72,7 +72,7 @@ async def main():
     loop_task = asyncio.create_task(keep_alive_loop())
 
     # Configura e inicia o servidor Uvicorn
-    config = uvicorn.Config(app=app, host="0.0.0.0", port=22222)
+    config = uvicorn.Config(app=asgi_app, host="0.0.0.0", port=22222)
     server = uvicorn.Server(config)
     await server.serve()
 
