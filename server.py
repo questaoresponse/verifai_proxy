@@ -57,7 +57,7 @@ async def webhook():
                 await client.post("https://verifai-w7pk.onrender.com/webhook", json=data)
 
         else:
-            io.emit("webhook", data)
+            await io.emit("webhook", data)
 
         return "EVENT_RECEIVED", 200
 
