@@ -15,8 +15,8 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 io = socketio.AsyncServer(
     async_mode='asgi',
     cors_allowed_origins='*',
-    ping_interval = 5,
-    ping_timeout = 3
+    ping_interval = 10,
+    ping_timeout = 5
 )
 app = Quart(__name__)
 asgi_app = socketio.ASGIApp(io, app)
@@ -84,9 +84,6 @@ async def main():
     config = uvicorn.Config(app=asgi_app, host="0.0.0.0", port=22222)
     server = uvicorn.Server(config)
     await server.serve()
-
-    # (opcional) espera o loop de keep-alive (só após shutdown)
-    await loop_task
 
 # Entry point
 if __name__ == "__main__":
