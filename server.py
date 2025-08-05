@@ -12,7 +12,12 @@ load_dotenv()
 
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
-io = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
+io = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins='*',
+    ping_interval = 5,
+    ping_timeout = 3
+)
 app = Quart(__name__)
 asgi_app = socketio.ASGIApp(io, app)
 
