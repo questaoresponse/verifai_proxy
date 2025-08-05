@@ -16,19 +16,22 @@ io = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 app = Quart(__name__)
 asgi_app = socketio.ASGIApp(io, app)
 
+n_clients = 0
+
 @io.event
 def connect(_, __, auth):
+    n_clients += 1
     token = auth.get("token") if auth else None
     if token != VERIFY_TOKEN:
         return False  # desconecta
 
 @io.event
 def disconnect(sid):
+    n_clients -= 1
     print(f"Cliente {sid} desconectado.")
 
 @app.route("/", methods=["GET"])
 def home():
-    n_clients = sum(1 for _ in io.manager.get_participants('/', '/'))
     return json.dumps({"n_clients": n_clients}), 200
 
 @app.route("/webhook", methods=["GET", "POST"])
@@ -47,7 +50,6 @@ async def webhook():
     elif request.method == "POST":
         data = await request.get_json()
 
-        n_clients = sum(1 for _ in io.manager.get_participants('/', '/'))
         if n_clients == 0:
             async with httpx.AsyncClient() as client:
                 await client.post("https://verifai-w7pk.onrender.com/webhook", json=data)
