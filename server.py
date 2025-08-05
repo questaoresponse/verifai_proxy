@@ -20,6 +20,7 @@ n_clients = 0
 
 @io.event
 def connect(_, __, auth):
+    global n_clients
     n_clients += 1
     token = auth.get("token") if auth else None
     if token != VERIFY_TOKEN:
@@ -27,6 +28,7 @@ def connect(_, __, auth):
 
 @io.event
 def disconnect(sid):
+    global n_clients
     n_clients -= 1
     print(f"Cliente {sid} desconectado.")
 
