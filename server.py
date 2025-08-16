@@ -41,7 +41,7 @@ def disconnect(sid):
 def home():
     return json.dumps({"n_clients": n_clients}), 200
 
-@app.route("/webhook", methods=["GET", "POST"])
+@app.route("/webhook_proxy", methods=["GET", "POST"])
 async def webhook():
     if request.method == "GET":
         mode = request.args.get("hub.mode")
