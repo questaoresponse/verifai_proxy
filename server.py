@@ -56,7 +56,8 @@ async def webhook():
         
     elif request.method == "POST":
         data = await request.get_json()
-
+        print(data)
+        
         if n_clients == 0:
             async with httpx.AsyncClient() as client:
                 await client.post("https://verifai-w7pk.onrender.com/webhook", json=data)
