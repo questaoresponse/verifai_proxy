@@ -1,4 +1,3 @@
-
 import asyncio
 import json
 import os
@@ -73,7 +72,7 @@ async def keep_alive_loop():
         try:
             async with httpx.AsyncClient() as client:
                 await client.get("https://verifai-proxy-uxrm.onrender.com")
-                await client.get("https://verifai-w7pk.onrender.com/webhook")
+                await client.get("https://verifai-w7pk.onrender.com")
         except:
             pass
 
